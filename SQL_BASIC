@@ -1,0 +1,165 @@
+show user;
+-- DDL (데이터 정의어) : CREATE, ALTER, DROP
+-- DML (데이터 조작어) : INSERT, UPDATE, DELETE, SELECT
+-- DCL (데이터 제어어) : GRANT, REVOKE
+-- TCL (트랜잭션 제어어) : COMMIT, ROLLBACK
+
+-- 1.테이블 생성(CREATE)
+CREATE TABLE tbl_student(
+    stuno NUMBER PRIMARY KEY, --제약조건(1.PK KEY)
+    name VARCHAR2(20) NOT NULL, -- 제약조건(2. NOT NULL)
+    age NUMBER(2),
+    major VARCHAR2(30),
+    sal NUMBER,
+    pno NUMBER UNIQUE,
+    score NUMBER(3),
+    regdate DATE DEFAULT SYSDATE --년월일 시분초 defualt값
+);
+
+--2. 제약조건(Constraint): 테이블!
+--      1) NOT NULL  컬럼에 공백값을 허용하지 않음!
+--      2) UNIQUE 중복된 데이터가 없어야함
+--      3) CHECK 값의 범위를 지정 (0~100, (1,2,3 중 하나만 지정))
+--      4) DEFAULT 값이 들어오지 않으면 설정된 default 값을 넣음!
+--      5) PRIMARY KEY(기본키) 테이블에 데이터를 유일하게 식별할 수 있는 컬럼을 선정! NOT NULL + UNIQUE 결합
+--      6) FOREIGN KEY(외래키) 관계를 맺어줄 때 사용, 관계를 맺는 테이블의 기본키만 외래키로 선정 가능
+
+-- 3. 테이블 삭제!(DROP)
+DROP TABLE tbl_student;
+
+-- 4. 테이블 수정!(ALTER)
+ALTER TABLE tbl_student
+    DROP COLUMN score; -- score 컬럼 삭제
+    
+ALTER TABLE tbl_student
+    ADD (score NUMBER(3)); -- score 컬럼 추가
+
+ALTER TABLE tbl_student
+    MODIFY (score NUMBER(5)); -- score 컬럼 수정
+    
+--테이블에 제약조건 추가
+ALTER TABLE tbl_student
+    ADD CONSTRAINT stu_ck_score -- 제약조건 이름
+    CHECK (score >= 0 AND score <=100); --CHECK 제약조건
+
+
+-- 테이블 구조(desc)
+DESC tbl_student; --describe
+
+-- tbl_student 테이블로부터 모든 값(*)을 selcet해오세요.
+SELECT * FROM tbl_student; -- * 모든값
+
+
+-- DML : 데이터 조작어 (INSERT, UPDATE, DELETE, SELECT) CRUD작업
+--1)INSERT (값을 추가) 
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(1, '혜원', 25, '영어번역', 4000, 1, 90);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(2, '동선', 28, '영상편집', 5500, 2, 90);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(3, '미경', 24, 'IT', 2600, 3, 92);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(4, '진주', 25, 'IT', 3000, 4, 98);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(5, '승주', 28, 'IT', 3500, 5, 85);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(6, '운이', 28, '요식업', 4200, 6, 80);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(7, '종희', 27, '패션디자인', 3500, 7, 87);
+
+COMMIT; -- COMMIT을 해야 완전저장이 된다.
+
+-- 2) UPDATE(값을 수정)
+UPDATE tbl_student -- where 절이 없으면 모든 테이블을 바꾸어버림.
+    SET age = 28,
+        sal = 5500
+WHERE STUNO=2; -- primary key 이용
+
+-- 3) DELETE(값을 삭제)
+DELETE FROM tbl_student
+WHERE stuno = 2;
+
+-- 4) SELECT(값을 조회)
+-- SELECT 컬럼들
+-- FROM 테이블명;
+SELECT * --*:모든 컬럼 
+FROM tbl_student; --전체조회
+
+SELECT name, age, sal
+FROM tbl_student;
+
+-- alias : 별칭 AS, 새로운 이름을 지어주고 싶을때, 1회성(한번 출력했을때에만)
+SELECT name AS 이름, age AS 나이, sal AS 연봉
+FROM tbl_student;
+
+--검색
+--이름이 '동선'인 학생을 검색
+SELECT *
+FROM tbl_student
+WHERE name = '동선';
+
+-- 전공이 'IT'인 학생을 검색
+SELECT *
+FROM tbl_student
+WHERE major = 'IT'; -- ' '문자열 안의 값은 대소문자 구분한다.
+
+-- score가 90점 이상인 학생만 검색
+SELECT *
+FROM tbl_student
+WHERE score >=90;
+
+-- score가 90점 이상, 95점 이하인 학생만 검색
+SELECT *
+FROM tbl_student
+WHERE score >=90 AND score <=95;
+
+SELECT *
+FROM tbl_student
+WHERE score IN (90,91,92,93,94,95); -- IN 포함하고 있냐는 뜻 ()안에 조건 나열 범위값이 지정되어있지 않는 경우 편함
+
+SELECT *
+FROM tbl_student
+WHERE major IN ('영어번역', '영상편집');
+
+SELECT * -- IN을 모를때 이런식으로도 가능함.
+FROM tbl_student
+WHERE major='영어번역' OR major='영상편집';
+
+
+--정렬
+SELECT *
+FROM tbl_student
+ORDER BY score ASC;
+
+
+SELECT * --생략시, DEFAULT 값은 오름차순
+FROM tbl_student
+ORDER BY score;
+
+
+SELECT *
+FROM tbl_student
+ORDER BY score ASC, sal DESC; -- 1차 정렬후, 2차 정렬 (1차 중복값을 정렬함)
+
+
+CREATE TABLE tbl_study(
+    sno VARCHAR2(20) PRIMARY KEY, -- 회원 번호
+    sname VARCHAR2(50) NOT NULL, -- 회원이름
+    sage NUMBER(2)
+);
+--INSERT로 값을 등록하는 첫번째 방법(가장 많이 사용)
+INSERT INTO tbl_study(sno, sname, sage)
+VALUES('1', '홍길동', 27);
+
+--INSERT로 값을 등록하는 두번째 방법
+INSERT INTO tbl_study
+VALUES('2', '홍갈동', 28); -- 모든 컬럼에 넣을때만 가능한 방법, 쓸일이 그닥 없음.
+
+--INSERT로 값을
+
