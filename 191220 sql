@@ -1,0 +1,579 @@
+show user;
+-- DDL (데이터 정의어) : CREATE, ALTER, DROP
+-- DML (데이터 조작어) : INSERT, UPDATE, DELETE, SELECT
+-- DCL (데이터 제어어) : GRANT, REVOKE
+-- TCL (트랜잭션 제어어) : COMMIT, ROLLBACK
+
+-- 1.테이블 생성(CREATE)
+CREATE TABLE tbl_student(
+    stuno NUMBER PRIMARY KEY, --제약조건(1.PK KEY)
+    name VARCHAR2(20) NOT NULL, -- 제약조건(2. NOT NULL)
+    age NUMBER(2),
+    major VARCHAR2(30),
+    sal NUMBER,
+    pno NUMBER UNIQUE,
+    score NUMBER(3),
+    regdate DATE DEFAULT SYSDATE --년월일 시분초 defualt값
+);
+
+--2. 제약조건(Constraint): 테이블!
+--      1) NOT NULL  컬럼에 공백값을 허용하지 않음!
+--      2) UNIQUE 중복된 데이터가 없어야함
+--      3) CHECK 값의 범위를 지정 (0~100, (1,2,3 중 하나만 지정))
+--      4) DEFAULT 값이 들어오지 않으면 설정된 default 값을 넣음!
+--      5) PRIMARY KEY(기본키) 테이블에 데이터를 유일하게 식별할 수 있는 컬럼을 선정! NOT NULL + UNIQUE 결합
+--      6) FOREIGN KEY(외래키) 관계를 맺어줄 때 사용, 관계를 맺는 테이블의 기본키만 외래키로 선정 가능
+
+-- 3. 테이블 삭제!(DROP)
+DROP TABLE tbl_student;
+
+-- 4. 테이블 수정!(ALTER)
+ALTER TABLE tbl_student
+    DROP COLUMN score; -- score 컬럼 삭제
+    
+ALTER TABLE tbl_student
+    ADD (score NUMBER(3)); -- score 컬럼 추가
+
+ALTER TABLE tbl_student
+    MODIFY (score NUMBER(5)); -- score 컬럼 수정
+    
+--테이블에 제약조건 추가
+ALTER TABLE tbl_student
+    ADD CONSTRAINT stu_ck_score -- 제약조건 이름
+    CHECK (score >= 0 AND score <=100); --CHECK 제약조건
+
+
+-- 테이블 구조(desc)
+DESC tbl_student; --describe
+
+-- tbl_student 테이블로부터 모든 값(*)을 selcet해오세요.
+SELECT * FROM tbl_student; -- * 모든값
+
+
+-- DML : 데이터 조작어 (INSERT, UPDATE, DELETE, SELECT) CRUD작업
+--1)INSERT (값을 추가) 
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(1, '혜원', 25, '영어번역', 4000, 1, 90);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(2, '동선', 28, '영상편집', 5500, 2, 90);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(3, '미경', 24, 'IT', 2600, 3, 92);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(4, '진주', 25, 'IT', 3000, 4, 98);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(5, '승주', 28, 'IT', 3500, 5, 85);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(6, '운이', 28, '요식업', 4200, 6, 80);
+
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(7, '종희', 27, '패션디자인', 3500, 7, 87);
+
+COMMIT; -- COMMIT을 해야 완전저장이 된다.
+
+-- 2) UPDATE(값을 수정)
+UPDATE tbl_student -- where 절이 없으면 모든 테이블을 바꾸어버림.
+    SET age = 28,
+        sal = 5500
+WHERE STUNO=2; -- primary key 이용
+
+-- 3) DELETE(값을 삭제)
+DELETE FROM tbl_student
+WHERE stuno = 2;
+
+-- 4) SELECT(값을 조회)
+-- SELECT 컬럼들
+-- FROM 테이블명;
+SELECT * --*:모든 컬럼 
+FROM tbl_student; --전체조회
+
+SELECT name, age, sal
+FROM tbl_student;
+
+-- alias : 별칭 AS, 새로운 이름을 지어주고 싶을때, 1회성(한번 출력했을때에만)
+SELECT name AS 이름, age AS 나이, sal AS 연봉
+FROM tbl_student;
+
+--검색
+--이름이 '동선'인 학생을 검색
+SELECT *
+FROM tbl_student
+WHERE name = '동선';
+
+-- 전공이 'IT'인 학생을 검색
+SELECT *
+FROM tbl_student
+WHERE major = 'IT'; -- ' '문자열 안의 값은 대소문자 구분한다.
+
+-- score가 90점 이상인 학생만 검색
+SELECT *
+FROM tbl_student
+WHERE score >=90;
+
+-- score가 90점 이상, 95점 이하인 학생만 검색
+SELECT *
+FROM tbl_student
+WHERE score >=90 AND score <=95;
+
+SELECT *
+FROM tbl_student
+WHERE score IN (90,91,92,93,94,95); -- IN 포함하고 있냐는 뜻 ()안에 조건 나열 범위값이 지정되어있지 않는 경우 편함
+
+SELECT *
+FROM tbl_student
+WHERE major IN ('영어번역', '영상편집');
+
+SELECT * -- IN을 모를때 이런식으로도 가능함.
+FROM tbl_student
+WHERE major='영어번역' OR major='영상편집';
+
+
+--정렬
+SELECT *
+FROM tbl_student
+ORDER BY score ASC;
+
+
+SELECT * --생략시, DEFAULT 값은 오름차순
+FROM tbl_student
+ORDER BY score;
+
+
+SELECT *
+FROM tbl_student
+ORDER BY score ASC, sal DESC; -- 1차 정렬후, 2차 정렬 (1차 중복값을 정렬함)
+
+
+CREATE TABLE tbl_study(
+    sno VARCHAR2(20) PRIMARY KEY, -- 회원 번호
+    sname VARCHAR2(50) NOT NULL, -- 회원이름
+    sage NUMBER(2)
+);
+--INSERT로 값을 등록하는 첫번째 방법(가장 많이 사용)
+INSERT INTO tbl_study(sno, sname, sage)
+VALUES('1', '홍길동', 27);
+
+--INSERT로 값을 등록하는 두번째 방법
+INSERT INTO tbl_study
+VALUES('2', '홍갈동', 28); -- 모든 컬럼에 넣을때만 가능한 방법, 쓸일이 그닥 없음.
+
+--INSERT로 값을
+
+
+
+
+
+
+
+
+DROP TABLE EMP;
+DROP TABLE DEPT;
+DROP TABLE BONUS;
+DROP TABLE SALGRADE;
+DROP TABLE DUMMY;
+ 
+CREATE TABLE EMP
+       (EMPNO NUMBER(4) PRIMARY KEY,
+        ENAME VARCHAR2(10),
+        JOB VARCHAR2(9),
+        MGR NUMBER(4),
+        HIREDATE DATE,
+        SAL NUMBER(7, 2),
+        COMM NUMBER(7, 2),
+        DEPTNO NUMBER(2));
+ 
+INSERT INTO EMP VALUES
+        (7369, 'SMITH',  'CLERK',     7902,
+        sysdate,  800, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7499, 'ALLEN',  'SALESMAN',  7698,
+        sysdate, 1600,  300, 30);
+         
+INSERT INTO EMP VALUES
+        (7521, 'WARD',   'SALESMAN',  7698,
+        sysdate, 1250,  500, 30);
+         
+INSERT INTO EMP VALUES
+        (7566, 'JONES',  'MANAGER',   7839,
+        sysdate,  2975, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7654, 'MARTIN', 'SALESMAN',  7698,
+        sysdate, 1250, 1400, 30);
+         
+INSERT INTO EMP VALUES
+        (7698, 'BLAKE',  'MANAGER',   7839,
+        sysdate,  2850, NULL, 30);
+         
+INSERT INTO EMP VALUES
+        (7782, 'CLARK',  'MANAGER',   7839,
+        sysdate,  2450, NULL, 10);
+INSERT INTO EMP VALUES
+        (7788, 'SCOTT',  'ANALYST',   7566,
+        sysdate, 3000, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7839, 'KING',   'PRESIDENT', NULL,
+        sysdate, 5000, NULL, 10);
+         
+INSERT INTO EMP VALUES
+        (7844, 'TURNER', 'SALESMAN',  7698,
+        sysdate,  1500,    0, 30);
+         
+INSERT INTO EMP VALUES
+        (7876, 'ADAMS',  'CLERK',     7788,
+        sysdate, 1100, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7900, 'JAMES',  'CLERK',     7698,
+        sysdate,   950, NULL, 30);
+         
+INSERT INTO EMP VALUES
+        (7902, 'FORD',   'ANALYST',   7566,
+        sysdate,  3000, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7934, 'MILLER', 'CLERK',     7782,
+        sysdate, 1300, NULL, 10);
+ 
+CREATE TABLE DEPT
+       (DEPTNO NUMBER(2) PRIMARY KEY,
+        DNAME VARCHAR2(14),
+        LOC VARCHAR2(13) );
+ 
+INSERT INTO DEPT VALUES (10, 'ACCOUNTING', 'NEW YORK');
+INSERT INTO DEPT VALUES (20, 'RESEARCH',   'DALLAS');
+INSERT INTO DEPT VALUES (30, 'SALES',      'CHICAGO');
+INSERT INTO DEPT VALUES (40, 'OPERATIONS', 'BOSTON');
+ 
+CREATE TABLE BONUS
+        (ENAME VARCHAR2(10),
+         JOB   VARCHAR2(9),
+         SAL   NUMBER,
+         COMM  NUMBER);
+ 
+CREATE TABLE SALGRADE
+        (GRADE NUMBER,
+         LOSAL NUMBER,
+         HISAL NUMBER);
+ 
+INSERT INTO SALGRADE VALUES (1,  700, 1200);
+INSERT INTO SALGRADE VALUES (2, 1201, 1400);
+INSERT INTO SALGRADE VALUES (3, 1401, 2000);
+INSERT INTO SALGRADE VALUES (4, 2001, 3000);
+INSERT INTO SALGRADE VALUES (5, 3001, 9999);
+ 
+CREATE TABLE DUMMY
+        (DUMMY NUMBER);
+ 
+INSERT INTO DUMMY VALUES (0);
+ 
+COMMIT;
+
+SELECT * FROM emp;
+
+--모든 데이터를 입력할 경우
+INSERT INTO emp --전체데이터에 넣을경우 ()생략 가능
+VALUES(8000, 'CHERRY', 'CLERK', 7902, TO_DATE('19/12/12'), 800, NULL, 20);
+
+--CTAS (테이블 복제)
+CREATE TABLE emp2
+AS
+SELECT * FROM emp;
+
+
+--사원번호가 7902번인 사원의 부서번호를 30으로 수정
+--부서번호 : deptono, 사원번호 : empno
+
+UPDATE emp
+    SET deptno = 30
+WHERE empno = 7902;
+
+--부서번호가 20인 모든 사원의 급여를 10% 올려주세요
+--급여 :sal, 테이블 emp2, 부서번호 : deptono
+
+UPDATE emp2
+SET sal = sal * 1.1
+WHERE deptno = 20;
+
+SELECT * FROM emp2;
+
+--모든 사원의 입사일을 오늘로 수정
+-입사일: hiredate, 테이블 emp2
+
+UPDATE emp2
+SET hiredate = SYSDATE;
+
+-- 사원번호가 7902번인 사원의 데이터를 삭제
+DELETE FROM emp2
+WHERE empno = 7902;
+
+--전체 사원을 삭제
+DELETE FROM emp2
+ROLLBACK;
+
+TRUNCATE TABLE emp2;
+
+INSERT INTO emp2
+SELECT * FROM emp;
+
+-- SELECT ~ WHERE
+-- WHERE절에 많이 사용하는 연산자
+-- IN : list의 값 중 어느 하나와 일치하는 데이터 출력
+-- NOT IN : list의 값과 일치하지 않는 데이터 출력
+-- IS NULL : NULL값을 갖는 데이터만 출력
+-- IS NOT NULL : NULL값을 갖지 않는 데이터를 출력
+-- BETWEEN a AND b :  a와 b사이의 데이터를 췰력 (a,b 포함) 이상 이하
+-- LIKE : 일치하는 데이터를 출력(검색할때 많이 씀)
+
+-- IN 연산자
+-- 사번이 7900, 7934번인 사원의 사번과 성명 출력
+SELECT empno, ename
+FROM emp2
+WHERE empno NOT IN(7900, 7934);
+
+--NOT IN 연산자
+--사번이 7900, 7934번이 아닌 사원의 사번과 성명출력
+SELECT empno, ename
+FROM emp2
+WHERE empno NOT IN(7900,7934);
+
+-- BETWEEN 연산자
+-- 급여가 3000에서 5000사이인 사원만 조회
+
+SELECT empno, ename
+FROM emp
+WHERE sal >=3000 AND sal <=5000;
+
+SELECT empno, ename
+FROM emp
+WHERE sal BETWEEN 3000 AND 5000;
+
+--LIKE
+-- : 검색 STRING 값에 대한 와일드 카드 검색을 위해서 사용
+-- % : 여러 문자를 뜻함
+-- _:1개의 문자를 사용
+
+SELECT empno, ename
+FROM emp2
+WHERE ename LIKE '%K%';
+
+-- ORDER BY (정렬)
+SELECT empno, ename, sal
+FROM emp2
+WHERE deptno = 30
+ORDER BY sal ASC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 기획사 테이블 생성
+CREATE TABLE tbl_enter(
+    ano VARCHAR2(20) PRIMARY KEY, -- 소속 아티스트 번호
+    aname VARCHAR2(50) NOT NULL,  --아티스트 이름
+    major VARCHAR2(50) NOT NULL,  -- 분야(연기, 가수...)
+    groupyn VARCHAR2(5) NOT NULL, -- 그룹 유무 (Y/N)
+    groupnm VARCHAR2(100),        --그룹이름, 그룹이 없을 수도 있으니 NOT NULL 이용 안함
+    sal NUMBER NOT NULL,          --연봉
+    regdate DATE DEFAULT SYSDATE
+);
+
+--시퀀스 : 내가 설정한 값을 자동으로 +1씩 해줌 DDL
+CREATE SEQUENCE seq_enter
+    START WITH 1     --시작값 설정
+    INCREMENT BY 1   --증가값 설정 (1씩 할건지 5씩할건지 10씩 할건지..)
+    NOCYCLE;         --순환X 무한대로 증가  
+--MAXVALUE 20        --최대값 부터는 증가안함
+--MINVALUE 1         --최소값
+--CYCLE / NOCYCLE    --반복여부 CYCLE은 최대값까지 올라가고 다시 돌라는 것
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '미나', '가수', 'y', '트와이스', 9900);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '나연', '가수', 'y', '트와이스', 9300);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '다현', '가수', 'y', '트와이스', 9500);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '유아', '가수', 'y', '오마이걸', 8500);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '아린', '가수', 'y', '오마이걸', 8600);
+
+
+COMMIT;
+
+SELECT * FROM tbl_enter;
+
+DESC tbl_enter;
+
+
+SELECT * FROM tbl_enter
+WHERE aname LIKE '%나%';
+
+
+
+
+
+
+
+
+
+
+-- 서점관리 테이블생성
+
+CREATE TABLE tbl_book(
+    bno VARCHAR2(20) PRIMARY KEY,   --책번호
+    bname VARCHAR2(100) NOT NULL,   --책이름
+    price NUMBER NOT NULL,          --책가격
+    company VARCHAR2(100) NOT NULL, --출판사
+    writer VARCHAR2(100) NOT NULL,  --저자
+    regdate DATE DEFAULT SYSDATE    -- 출판일자
+);
+
+CREATE SEQUENCE seq_book
+START WITH 1
+INCREMENT BY 1
+NOCYCLE;
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, 'Do IT 자바프로그래밍 입문', 25000, '이지스퍼블리싱', '박은종');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, '열혈 JAVA 프로그래밍', 30000, '오렌지미디어', '윤성우');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, '예제로 익히는 제이쿼리 3', 33000, '에이콘', '아담 보두치');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, '오라클과 SQL PL/SQL을 다루는 기술', 28000, '길벗', '홍형경');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, 'Java! 자바! 잡아?', 22000, '나자바바', '최초롱');
+COMMIT;
+
+SELECT * FROM tbl_book;
+
+
+
+
+
+
+-- 테이블명 :tbl_board
+--컬럼리스트 bno 숫자 기본키
+--         title 문자열(200) not null
+--         content 문자열(500) not null
+--         writer 문자열 (100) not null
+--        regdate 날짜형 디폴트 현재날짜
+
+DROP TABLE tbl_board;
+CREATE TABLE tbl_board(
+    bno NUMBER PRIMARY KEY,   
+    title VARCHAR2(200) NOT NULL,   
+    content VARCHAR2(500) NOT NULL, 
+    writer VARCHAR2(100) NOT NULL,  
+    viewcnt NUMBER DEFAULT 0, --조회수 만드는 거. 
+    regdate DATE DEFAULT SYSDATE    
+);
+     
+
+  DROP SEQUENCE seq_board;
+    CREATE SEQUENCE seq_board
+    START WITH 1
+    INCREMENT BY 1
+    NOCYCLE;
+
+
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 1번', '게시글 1번이에요', '홍길동');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 2번', '게시글 2번이에요', '김첨지');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 3번', '게시글 3번이에요', '스크루지');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 4번', '게시글 4번이에요', '생생통');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 5번', '게시글 5번이에요', '참쌀선과');
+
+commit;
+
+
+SELECT * FROM tbl_board;
+
+SELECT *
+FROM tbl_board
+ORDER BY viewcnt DESC;
+
+
+
+
+
+
+
+DROP TABLE tbl_bank;
+CREATE TABLE tbl_bank(
+    bno NUMBER PRIMARY KEY,      -- 계좌번호   
+    bname VARCHAR2(50) NOT NULL, -- 예금주
+    pw VARCHAR2(50) NOT NULL,    -- 계좌 비밀번호   
+    money NUMBER DEFAULT 0,      -- 계좌 잔고  
+    regdate DATE DEFAULT SYSDATE  
+);   
+DROP SEQUENCE seq_bank;
+CREATE SEQUENCE seq_bank
+START WITH 101
+INCREMENT BY 1
+NOCYCLE;
+
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '홍길동', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '김흥부', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '최놀부', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '차갑부', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '건물주', '1234');
+COMMIT;
+
+SELECT * FROM tbl_bank;
+
+SELECT * FROM tbl_bank
+WHERE bname LIKE '%흥%';
