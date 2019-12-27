@@ -1,0 +1,28 @@
+--여기는 관리자 화면입니다.
+
+/*
+오라클 DBMS에서 권장하는 물리적 데이터 저장공간을 만들기
+C:/bizwork/ordata 폴더에 user.dbf라는 이름으로 파일을 만들어서 
+그곳에 앞으로 데이터를 저장하겠다
+
+최초에 데이터 없어도 공간을 10M(Byte)만큼 예약을 해 달라
+INSERT를 수행할때 성능을 높이기 위해서
+실제 저장될 데이터들의 용량을 계산하여 설계 당시 지정
+
+만약 기본 용량이 부족하면 10K(Byte)씩 자동으로 증가 되도록 설정하라 (데이터가 모자른 사고를 방지하기 위해)
+*/
+
+
+
+CREATE TABLESPACE userTB
+DATAFILE 'C:/bizwork/ordata/user.dbf'
+SIZE 10M AUTOEXTEND ON  NEXT 10K;
+
+
+
+--새로운 ID가 USER인 사용자를 등록하는데
+--user가 데이터를 추가하면 userTB테이블 스페이스에 저장하라
+CREATE USER user1 IDENTIFIED BY 1234
+DEFAULT TABLESPACE userTB;
+
+GRANT DBA TO user1;
