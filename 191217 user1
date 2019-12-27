@@ -1,0 +1,50 @@
+-- 여기는 user1 입니다
+
+CREATE TABLE tbl_iolist(
+    io_seq	NUMBER	PRIMARY KEY,	
+    io_date	VARCHAR2(10)		NOT NULL,
+    io_time	VARCHAR2(8)		NOT NULL,
+    io_inout	nVARCHAR2(5)		NOT NULL,
+    io_dname	nVARCHAR2(20)		NOT NULL,
+    io_pname	nVARCHAR2(50)		NOT NULL,
+    io_price	NUMBER		NOT NULL,
+    io_qty	NUMBER		NOT NULL,
+    io_total	NUMBER		
+
+);
+
+select * from tbl_iolist;
+select count(*) from tbl_iolist ;
+
+SELECT * FROM tbl_iolist
+where io_inout = '매출';
+
+select * from tbl_iolist
+where io_dname = '러시아상사';
+
+select
+IO_SEQ,
+IO_DATE,
+IO_TIME,
+IO_INOUT,
+IO_DNAME,
+IO_PNAME,
+IO_PRICE,
+IO_QTY,
+-- as 이름 : table을 보여줄때 칼럼의 제목을 지정하기
+-- alias라고 표현한다.
+-- as 키워드를 생략해도 된다.
+
+IO_price * io_qty as 합계 
+from tbl_iolist;
+
+--전체데이터에서 매입과 매출의 합계를 구분하여 보고싶다.
+SELECT io_inout , SUM(io_qty * io_price)
+FROM tbl_iolist
+GROUP BY io_inout;
+
+-- 전체데이터에서 거래처별로 매입과 매출의 합계를 구분하여 보고 싶다.
+SELECT io_dname, io_inout , SUM(io_qty * io_price)
+FROM tbl_iolist
+GROUP BY io_dname, io_inout
+ORDER BY io_dname, io_inout;
