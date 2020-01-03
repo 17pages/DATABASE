@@ -1,0 +1,28 @@
+CREATE TABLE tbl_boardM(
+    bno NUMBER PRIMARY KEY,         
+    title VARCHAR2(200) NOT NULL, 
+    content VARCHAR2(500) NOT NULL,   
+    writer VARCHAR2(100) NOT NULL,
+    viewcnt NUMBER DEFAULT 0,        
+    regdate DATE DEFAULT SYSDATE  
+); 
+
+   CREATE SEQUENCE seq_boardM
+    START WITH 1
+    INCREMENT BY 1
+    NOCYCLE;
+    
+    INSERT INTO tbl_boardM(bno, title, content, writer)
+VALUES(seq_boardM.NEXTVAL, '게시글 1번', '게시글 1번이에요', '홍길동');
+INSERT INTO tbl_boardM(bno, title, content, writer)
+VALUES(seq_boardM.NEXTVAL, '게시글 2번', '게시글 2번이에요', '김첨지');
+INSERT INTO tbl_boardM(bno, title, content, writer)
+VALUES(seq_boardM.NEXTVAL, '게시글 3번', '게시글 3번이에요', '스크루지');
+INSERT INTO tbl_boardM(bno, title, content, writer)
+VALUES(seq_boardM.NEXTVAL, '게시글 4번', '게시글 4번이에요', '생생통');
+INSERT INTO tbl_boardM(bno, title, content, writer)
+VALUES(seq_boardM.NEXTVAL, '게시글 5번', '게시글 5번이에요', '참쌀선과');
+
+commit;
+
+SELECT * FROM tbl_boardM;
