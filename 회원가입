@@ -1,0 +1,25 @@
+
+-- 회원 테이블
+
+DROP TABLE tbl_member
+CREATE TABLE tbl_member(
+    id VARCHAR2(50) PRIMARY KEY,
+    pw VARCHAR2(30) NOT NULL,
+    name VARCHAR2(100) NOT NULL,
+    phone VARCHAR2(100),
+    regdate DATE DEFAULT SYSDATE
+    
+);
+
+INSERT INTO tbl_member(id, pw, name, phone)
+VALUES('admin', '1234', 'admin', '01012345678');
+
+INSERT INTO tbl_member(id, pw, name, phone)
+VALUES('user01', '1234', '도비', '01011112222');
+
+INSERT INTO tbl_member(id, pw, name, phone)
+VALUES('user02', '1234', '똥선', '01034345656');
+
+COMMIT;
+
+SELECT * FROM tbl_member;
