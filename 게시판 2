@@ -1,0 +1,33 @@
+DROP TABLE tbl_board;
+CREATE TABLE tbl_board(
+    bno NUMBER PRIMARY KEY,   
+    title VARCHAR2(200) NOT NULL,   
+    content VARCHAR2(500) NOT NULL, 
+    writer VARCHAR2(100) NOT NULL,  
+    viewcnt NUMBER DEFAULT 0, --조회수 만드는 거. 
+    regdate DATE DEFAULT SYSDATE    
+);
+     
+
+  DROP SEQUENCE seq_board;
+    CREATE SEQUENCE seq_board
+    START WITH 1
+    INCREMENT BY 1
+    NOCYCLE;
+
+
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 1번', '게시글 1번이에요', '홍길동');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 2번', '게시글 2번이에요', '김첨지');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 3번', '게시글 3번이에요', '스크루지');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 4번', '게시글 4번이에요', '생생통');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.NEXTVAL, '게시글 5번', '게시글 5번이에요', '참쌀선과');
+
+commit;
+
+
+SELECT * FROM tbl_board;
