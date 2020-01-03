@@ -1,0 +1,32 @@
+CREATE TABLE tbl_book(
+    bno VARCHAR2(20) PRIMARY KEY,   --책번호
+    bname VARCHAR2(100) NOT NULL,   --책이름
+    price NUMBER NOT NULL,          --책가격
+    company VARCHAR2(100) NOT NULL, --출판사
+    writer VARCHAR2(100) NOT NULL,  --저자
+    regdate DATE DEFAULT SYSDATE    -- 출판일자
+);
+
+CREATE SEQUENCE seq_book
+START WITH 1
+INCREMENT BY 1
+NOCYCLE;
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, 'Do IT 자바프로그래밍 입문', 25000, '이지스퍼블리싱', '박은종');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, '열혈 JAVA 프로그래밍', 30000, '오렌지미디어', '윤성우');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, '예제로 익히는 제이쿼리 3', 33000, '에이콘', '아담 보두치');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, '오라클과 SQL PL/SQL을 다루는 기술', 28000, '길벗', '홍형경');
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.NEXTVAL, 'Java! 자바! 잡아?', 22000, '나자바바', '최초롱');
+COMMIT;
+
+SELECT * FROM tbl_book;
+
