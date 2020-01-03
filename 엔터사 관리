@@ -1,0 +1,40 @@
+CREATE TABLE tbl_enter(
+    ano VARCHAR2(20) PRIMARY KEY, -- 소속 아티스트 번호
+    aname VARCHAR2(50) NOT NULL,  --아티스트 이름
+    major VARCHAR2(50) NOT NULL,  -- 분야(연기, 가수...)
+    groupyn VARCHAR2(5) NOT NULL, -- 그룹 유무 (Y/N)
+    groupnm VARCHAR2(100),        --그룹이름, 그룹이 없을 수도 있으니 NOT NULL 이용 안함
+    sal NUMBER NOT NULL,          --연봉
+    regdate DATE DEFAULT SYSDATE
+);
+
+--시퀀스 : 내가 설정한 값을 자동으로 +1씩 해줌 DDL
+CREATE SEQUENCE seq_enter
+    START WITH 1     --시작값 설정
+    INCREMENT BY 1   --증가값 설정 (1씩 할건지 5씩할건지 10씩 할건지..)
+    NOCYCLE;         --순환X 무한대로 증가  
+--MAXVALUE 20        --최대값 부터는 증가안함
+--MINVALUE 1         --최소값
+--CYCLE / NOCYCLE    --반복여부 CYCLE은 최대값까지 올라가고 다시 돌라는 것
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '미나', '가수', 'y', '트와이스', 9900);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '나연', '가수', 'y', '트와이스', 9300);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '다현', '가수', 'y', '트와이스', 9500);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '유아', '가수', 'y', '오마이걸', 8500);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '아린', '가수', 'y', '오마이걸', 8600);
+
+
+COMMIT;
+
+SELECT * FROM tbl_enter;
+
+DESC tbl_enter;
