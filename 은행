@@ -1,0 +1,33 @@
+
+DROP TABLE tbl_bank;
+CREATE TABLE tbl_bank(
+    bno NUMBER PRIMARY KEY,      -- 계좌번호   
+    bname VARCHAR2(50) NOT NULL, -- 예금주
+    pw VARCHAR2(50) NOT NULL,    -- 계좌 비밀번호   
+    money NUMBER DEFAULT 0,      -- 계좌 잔고  
+    regdate DATE DEFAULT SYSDATE  
+);   
+DROP SEQUENCE seq_bank;
+CREATE SEQUENCE seq_bank
+START WITH 101
+INCREMENT BY 1
+NOCYCLE;
+
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '홍길동', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '김흥부', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '최놀부', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '차갑부', '1234');
+
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.NEXTVAL, '건물주', '1234');
+COMMIT;
+
+SELECT * FROM tbl_bank;
